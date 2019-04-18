@@ -1,0 +1,437 @@
+package plantProject;
+
+
+
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+
+public class MenuInfo {
+
+	NumberFormat money = NumberFormat.getCurrencyInstance();
+
+	public ArrayList<Plants> loadPlants() {
+		ArrayList<Plants> plants = new ArrayList<Plants>();
+		plants.add(new Plants("JAPMA", "Japanese Maple", 30, 60.25, 85.50));
+		plants.add(new Plants("DOG", "Dogwood", 20, 15.50, 32.50));
+		plants.add(new Plants("RED", "Redbud", 45, 21.00, 28.00));
+		plants.add(new Plants("RBUCK", "Red Buckeye", 24, 21.00, 33.00));
+		plants.add(new Plants("CRMY", "Crape Myrtle", 48, 19.00, 29.50));
+		plants.add(new Plants("TULIP", "Tulip Tree", 30, 23.00, 38.50));
+		plants.add(new Plants("FALSE", "Hinoki False Cypress", 40, 18.35, 29.50));
+		plants.add(new Plants("SERVICE", "Serviceberry", 30, 43.00, 58.50));
+		plants.add(new Plants("SMOKE", "Smoke Tree", 18, 34.00, 45.50));
+		return plants;
+	}
+
+	public static ArrayList<Plants> readSerializable() // menu item #1
+	{
+		// create the ArrayList
+		ArrayList<Plants> plants = new ArrayList<Plants>();
+
+		Frame f = new Frame();
+		// decide from where to read the file
+		FileDialog foBox = new FileDialog(f, "Reading serialized file",
+				FileDialog.LOAD);
+		foBox.setVisible(true);
+		// get the absolute path to the file
+		String foName = foBox.getFile();
+		String dirPath = foBox.getDirectory();
+		File inFile = new File(dirPath + foName);
+
+		// create a file instance for the absolute path
+		ObjectInputStream OIS = null;
+		try {
+			FileInputStream IS = new FileInputStream(inFile); // create a file
+																// input stream
+																// for the file
+																// that we chose
+			OIS = new ObjectInputStream(IS); // create the object imput stream
+			plants = (ArrayList) OIS.readObject(); // note that you can read in
+													// the entire object (the
+													// array list) at once
+			// now read in that extra piece of data that we wrote out and set
+			// the next customer number to use
+		} catch (IOException io) {
+			io.printStackTrace(); // great for debugging!
+			System.out.println("An IO Exception occurred");
+		}
+		// note that you can also have a class not found exception.
+		catch (ClassNotFoundException cnf) {
+			cnf.printStackTrace(); // great for debugging!
+			System.out.println("An IO Exception occurred");
+		} finally // finally always runs no matter what so close the file here!
+		{
+			// close the file. Java is neurotic - it worried
+			// "but what if it is already closed?" so needs another try/catch
+			try {
+				OIS.close();
+			} catch (Exception e) {
+			} // note the {} - means "do nothing". I wanted it closed anyway.
+		}
+		return plants;
+
+	}
+
+	public void writeSerializable(ArrayList<Plants> st) // menu item #2
+	{
+		// create the frame for the FileDialog box
+		Frame f = new Frame();
+		// decide where to save the file
+		FileDialog foBox = new FileDialog(f, "Saving customer file",
+				FileDialog.SAVE);
+		foBox.setVisible(true);
+		// we need to get the path where the file will be stored.
+		// the user will pick one from the dialog box
+		// the combination of the directory name plus the file name is the
+		// absolute path
+		String foName = foBox.getFile();
+		String dirPath = foBox.getDirectory();
+		// create a File instance for that absolute path
+		File outFile = new File(dirPath + foName);
+		// create a PrintWriter
+		FileOutputStream OS = null;
+		ObjectOutputStream OOS = null;
+
+		try {
+			// create the FileOutputStream object
+			OS = new FileOutputStream(outFile);
+			// create the ObjectOutputStream object
+			OOS = new ObjectOutputStream(OS); // create your output string
+
+			OOS.writeObject(st); // write the entire array list out at once.
+									// COOL!!!
+
+			// we also want to save the next customer number
+			// now print the next customer number that should be used to the
+			// file also
+			// need to keep track of this so that when you read the data back
+			// in, you do not reuse
+			// customer numbers
+			// OOS.writeInt(Customer.num);
+
+		}
+		// catch any IOExceptions that occur
+		catch (IOException io) {
+			io.printStackTrace(); // shows any errors
+			System.out.println("An IO Exception occurred");
+		} finally // finally always runs no matter what so close the file here!
+		{
+			// close the file. Java is neurotic - it worried
+			// "but what if it is already closed?" so needs another try/catch
+			try {
+				OOS.close();
+			} catch (Exception e) {
+			} // note the {} - means "do nothing". I wanted it closed anyway.
+		}
+
+	}
+
+	public void print(ArrayList<Plants> pl) // menu item #5
+	{
+		System.out.println("Current plants ininventory:");
+		for (int i = 0; i < pl.size(); i++)
+			System.out.println(pl.get(i).toString());
+
+	}
+
+	// method should print out two values.
+	// The first is how much total money we have invested in our plants
+	// The second is how much we would get if we sold the total inventory
+	public void total(ArrayList<Plants> st) // menu item #4
+	{
+
+		int totalNuminStock = 0;
+		double totalCost = 0;
+		double totalInvested = 0;
+		double totalInvested2 = 0;
+		double totalInvested3 = 0;
+		// total money invested
+		for (int i = 0; i < st.size(); i++) {
+			totalNuminStock = st.get(i).getNumInStock();
+			totalCost = st.get(i).getOurCost();
+			totalInvested = totalNuminStock * totalCost;
+			totalInvested2 = totalInvested + totalInvested2;
+		}
+
+		for (int i = 0; i < st.size(); i++) {
+			totalNuminStock = st.get(i).getNumInStock();
+			totalCost = st.get(i).getSalesCost();
+			totalInvested = totalNuminStock * totalCost;
+			totalInvested3 = totalInvested + totalInvested3;
+		}
+
+		System.out
+				.println("How much total money we have invested in our plants "
+						+ money.format(totalInvested2));
+		System.out
+				.println("how much we would get if we sold the total inventory "
+						+ money.format(totalInvested3));
+	}
+
+	public void find(ArrayList<Plants> st) // menu item #5
+	{
+		Scanner scan = new Scanner(System.in);
+
+		System.out
+				.println("What is the name of the Plant you are trying to find?");
+		String plantName = scan.nextLine();
+		plantName = plantName.toLowerCase();
+		String plantName2;
+		int counter3 = 0;
+		for (int i = 0; i < st.size(); i++) {
+			// covert to lower case
+			plantName2 = st.get(i).getDescription().toLowerCase();
+			if (plantName2.contains(plantName)) {
+				System.out.println(st.get(i).toString());
+				counter3 = 1;
+			}
+		}
+
+		if (counter3 == 0) {
+			System.out.println("Did not Find.  Try again");
+		}
+
+	}
+
+	public void addPlants(ArrayList<Plants> st) // menu item #6
+	{
+
+		Scanner scan = new Scanner(System.in);
+
+		boolean more = true;
+		while (more) {
+			menuAdd();
+
+			int choice = scan.nextInt();
+			if (choice == 2) {
+				scan.nextLine();
+				System.out.println("\n What is the ID? ");
+				String id = scan.nextLine();
+				System.out.println("What is the description ");
+				String plantDescription = scan.nextLine();
+				System.out.println("How Many? ");
+				int howMany = scan.nextInt();
+				System.out.println("Our Cost? ");
+				double ourCost = scan.nextDouble();
+				System.out.println("Selling Cost? ");
+				double sellingCost = scan.nextDouble();
+				String id2 = id.toUpperCase();
+				st.add(new Plants(id2, plantDescription, howMany, ourCost,
+						sellingCost));
+			}
+
+			else if (choice == 1) {
+
+				System.out.println("Current plants in Inventory with ID:");
+				for (int i = 0; i < st.size(); i++)
+					System.out.println(st.get(i).getId() + " "
+							+ st.get(i).toString());
+
+				scan.nextLine();
+				System.out
+						.println("\n What ID do you want to add more inventory? ");
+				String id = scan.nextLine();
+				String id2 = id.toUpperCase();
+				int arrayno = 0;
+				int counter1 = 0;
+				for (int i = 0; i < st.size(); i++) {
+
+					String id3 = st.get(i).getId();
+					if (id2.equals(id3)) {
+						arrayno = i;
+						counter1 = 1;
+					}
+				}
+
+				if (counter1 == 1) {
+
+					System.out.println("How Many do you want to add? ");
+					int howMany = scan.nextInt();
+
+					int currentStock = st.get(arrayno).getNumInStock();
+					int currentStockFinal = howMany + currentStock;
+
+					st.get(arrayno).setNumInStock(currentStockFinal);
+
+					System.out
+							.println("Current Inventory List after addition:");
+					for (int i = 0; i < st.size(); i++)
+						System.out.println(st.get(i).getId() + " "
+								+ st.get(i).toString());
+				}
+
+				if (counter1 == 0) {
+					System.out.println("No Match for ID ");
+				}
+
+			} else if (choice == 3) {
+				more = false;
+			} else {
+				more = false;
+				System.out.println("BYE!!");
+			}
+
+		}
+
+	}
+
+	public void deletePlants(ArrayList<Plants> st) // menu item #7
+	{
+		// calls the menuDelete method below
+
+		// write the code to do the item depending on their choice
+
+		Scanner scan = new Scanner(System.in);
+
+		boolean more = true;
+		while (more) {
+			menuDelete();
+
+			int choice = scan.nextInt();
+			if (choice == 2) {
+				System.out.println("");
+				System.out.println("Current Inventory List including ID");
+
+				for (int i = 0; i < st.size(); i++) {
+					System.out.println(st.get(i).getId() + " "
+							+ st.get(i).toString());
+				}
+
+				scan.nextLine();
+				System.out.println("\n What ID would you like to delete? ");
+				String id = scan.nextLine();
+				String id2 = id.toUpperCase();
+				int arrayno = 0;
+				int counter1 = 0;
+				for (int i = 0; i < st.size(); i++) {
+
+					String id3 = st.get(i).getId();
+					if (id2.equals(id3)) {
+						arrayno = i;
+						counter1 = 1;
+					}
+				}
+
+				if (counter1 == 1) {
+
+					st.remove(arrayno);
+
+					System.out
+							.println("Current Inventory List after Deletion:");
+					for (int i = 0; i < st.size(); i++) {
+						System.out.println(st.get(i).getId() + " "
+								+ st.get(i).toString());
+					}
+				}
+
+				if (counter1 == 0) {
+					System.out.println("No Match for ID ");
+				}
+
+			}
+
+			else if (choice == 1) {
+
+				System.out.println("Current plants in Inventory with ID:");
+				for (int i = 0; i < st.size(); i++) {
+					System.out.println(st.get(i).getId() + " "
+							+ st.get(i).toString());
+				}
+
+				scan.nextLine();
+				System.out
+						.println("\n What ID do you want to delete inventory? ");
+				String id = scan.nextLine();
+				String id2 = id.toUpperCase();
+				int arrayno = 0;
+				int counter1 = 0;
+				for (int i = 0; i < st.size(); i++) {
+
+					String id3 = st.get(i).getId();
+					if (id2.equals(id3)) {
+						arrayno = i;
+						counter1 = 1;
+					}
+				}
+
+				if (counter1 == 1) {
+
+					System.out.println("How Many do you want to remove? ");
+					int howMany = scan.nextInt();
+
+					int currentStock = st.get(arrayno).getNumInStock();
+					int currentStockFinal = currentStock - howMany;
+
+					if (currentStockFinal > -1) {
+						st.get(arrayno).setNumInStock(currentStockFinal);
+
+						System.out
+								.println("Current Inventory List after deletion:");
+						for (int i = 0; i < st.size(); i++) {
+							System.out.println(st.get(i).getId() + " "
+									+ st.get(i).toString());
+						}
+					}
+
+					if (currentStockFinal < 0) {
+
+						System.out
+								.println("Inventory Less than 0 - Try again ");
+					}
+				}
+
+				if (counter1 == 0) {
+					System.out.println("No Match for ID ");
+				}
+
+			} else if (choice == 3) {
+				more = false;
+			} else {
+				more = false;
+				System.out.println("BYE!!");
+			}
+
+		}
+
+	}
+
+	public void menuAdd() {
+		// Menu item 1. Ask the user for the id of the plant and how many to add
+		// make certain to indicate if this id does not exist.
+		// Menu item 2. ask if they want to add a new plant. If so, ask for the
+		// required
+		// info0rmation, create the plant instance, and add it to the collection
+		// Menu item 3. Go back to the main menu.
+		Scanner scan = new Scanner(System.in);
+		System.out.println("\n1.  add more plants to existing inventory");
+		System.out
+				.println("2.  add a new plant item (add new id) to inventory");
+		System.out.println("3.  exit to main menu\n");
+
+	}
+
+	public void menuDelete() {
+		// Menu item 1. Ask the user for the id of the plant and how many shares
+		// to remove
+		// Do not let them remove more than exist in inventory
+		// If the id does not exist, make certain to indicate this.
+		// Menu item 2. ask for the plant id and totally delete that plant from
+		// the collection
+		// If the id does not exist, make certain to indicate this.
+		// Menu item 3. Go back to the main menu.
+		System.out.println("\n1.  delete plants from existing inventory");
+		System.out.println("2.  remove the plant (delete id) from inventory");
+		System.out.println("3.  exit to main menu\n");
+	}
+}
