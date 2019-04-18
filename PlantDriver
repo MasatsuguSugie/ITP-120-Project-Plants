@@ -1,0 +1,75 @@
+package plantProject;
+
+import java.util.*;
+
+public class PlantDriver {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		ArrayList<Plants> plants = new ArrayList<Plants>();
+
+		MenuInfo mi = new MenuInfo();
+
+		int ans = 0;
+		while (true) {
+			menu();
+			System.out.println("CHOICE:");
+			ans = scan.nextInt();
+			if (ans == 0)
+				plants = mi.loadPlants();
+			if (ans == 1) {
+				// read serializable
+				plants = mi.readSerializable();
+			}
+			if (ans == 2) {
+				// write serializable
+				mi.writeSerializable(plants);
+			}
+
+			if (ans == 3) {
+				// print all plants
+				mi.print(plants);
+			}
+
+			if (ans == 4) {
+				// total value invested and total value of the inventory if sold
+				// (print out two values_)
+				mi.total(plants);
+			}
+
+			if (ans == 5) {
+				// find a stock by id code
+				mi.find(plants);
+			}
+			if (ans == 6) {
+				// add a plant or more plants to a current inventory item
+				mi.addPlants(plants);
+			}
+			if (ans == 7) {
+				// delete some plants or an entire plant entry from the
+				// inventory
+				mi.deletePlants(plants);
+			}
+
+			if (ans == 8) {
+				System.out.println("See you later!");
+				System.exit(0);
+			}
+
+		}
+	}
+
+	public static void menu() {
+		System.out.println("\n0.  prime the data");
+		System.out.println("1.  read a serializable file");
+		System.out.println("2.  write to a serialized file");
+		System.out.println("3.  print all plant information");
+		System.out
+		.println("4.  list the value and the amount invested for the inventory (2 numbers)");
+		System.out.println("5.  find a plant by name or part of name");
+		System.out.println("6.  add plants (existing or new)");
+		System.out.println("7.  delete plants (existing or new)");
+		System.out.println("8.  exit\n");
+	}
+
+}
