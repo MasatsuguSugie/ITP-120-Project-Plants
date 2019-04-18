@@ -1,0 +1,88 @@
+package plantProject;
+
+import java.io.Serializable;
+import java.text.NumberFormat;
+
+
+
+public class Plants implements Serializable {
+
+	// Fields
+	private String id;
+	private String description;
+	private int numInStock;
+	private double ourCost;
+	private double salesCost;
+
+	// public static int num=100;
+
+	public Plants() {
+		super();
+	}
+
+	public Plants(String id, String desc, int num, double cost, double value) {
+		description = desc;
+		this.id = id;
+		numInStock = num;
+		ourCost = cost;
+		salesCost = value;
+
+	}
+
+	// toString
+	public String toString() {
+		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		return "There are " + numInStock + " " + description
+				+ " in stock that cost us " + nf.format(ourCost)
+				+ " each that we are selling for " + nf.format(salesCost)
+				+ " each";
+	}
+
+	// Returns true if ids are equal
+	public boolean equals(Plants st) {
+		if (this.getId() == st.getId())
+			return true;
+		else
+			return false;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getNumInStock() {
+		return numInStock;
+	}
+
+	public void setNumInStock(int numInStock) {
+		this.numInStock = numInStock;
+	}
+
+	public double getOurCost() {
+		return ourCost;
+	}
+
+	public void setOurCost(double ourCost) {
+		this.ourCost = ourCost;
+	}
+
+	public double getSalesCost() {
+		return salesCost;
+	}
+
+	public void setSalesCost(double salesCost) {
+		this.salesCost = salesCost;
+	}
+
